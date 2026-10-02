@@ -1,0 +1,14 @@
+mini-db/
+   .gitignore
+README.md
+pom.xl
+src/
+  main/
+    java/
+       com/yourname/minidb/
+Main.java 
+Database.java
+Page.java
+BPplusTree.java
+DiskManager.java
+CommandParser.java
