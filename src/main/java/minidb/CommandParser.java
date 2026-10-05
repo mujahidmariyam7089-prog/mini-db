@@ -1,0 +1,97 @@
+package com.mujah.minidb;
+
+import java.io.IOException;
+import java.util.List;
+
+public class CommandParser {
+    private final Database db;
+
+    public CommandParser(Database db) {
+        this.db = db;
+    }
+
+    public String handle(String input) throws IOException {
+        input = input.trim();
+
+        if (input.isEmpty()) {
+            return "";
+        }
+
+        String[] parts = input.split("\\s+", 3);
+        String command = parts[0].toUpperCase();
+
+        switch (command) {
+            case "HELP":
+                return help();
+
+            case "SET":
+                return handleSet(parts);
+
+            case "GET":
+                return handleGet(parts);
+
+            case "DELETE":
+                return handleDelete(parts);
+
+            case "LIST":
+                return handleList();
+
+            case "EXIT":
+            case "QUIT":
+                return "Exiting...";
+
+            default:
+                return "Unknown command: " + command + ". Type HELP.";
+        }
+    }
+
+    private String help() {
+        return """
+            Available commands:
+
+              SET <key> <value>    Store a value
+              GET <key>            Read a value
+              DELETE <key>         Delete a key
+              LIST                 List all keys
+              HELP                 Show commands
+              EXIT                 Quit the database
+            """;
+    }
+
+    private String handleSet(String[] parts) throws IOException {
+        if (parts.length < 3) {
+            return "Usage: SET <key> <value>";
+        }
+
+        db.set(parts[1], parts[2]);
+        return "OK";
+    }
+
+    private String handleGet(String[] parts) throws IOException {
+        if (parts.length < 2) {
+            return "Usage: GET <key>";
+        }
+
+        String value = db.get(parts[1]);
+        return value != null ? value : "(nil)";
+    }
+
+    private String handleDelete(String[] parts) throws IOException {
+        if (parts.length < 2) {
+            return "Usage: DELETE <key>";
+        }
+
+        db.delete(parts[1]);
+        return "OK";
+    }
+
+    private String handleList() throws IOException {
+        List<String> all = db.listAll();
+
+        if (all.isEmpty()) {
+            return "(empty)";
+        }
+
+        return String.join("\n", all);
+    }
+} 
