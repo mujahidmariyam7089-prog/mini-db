@@ -36,6 +36,9 @@ public class CommandParser {
             case "LIST":
                 return handleList();
 
+            case "EXISTS":
+                return handleExists(parts);
+
             case "EXIT":
             case "QUIT":
                 return "Exiting...";
@@ -53,6 +56,7 @@ public class CommandParser {
               GET <key>            Read a value
               DELETE <key>         Delete a key
               LIST                 List all keys
+              EXISTS <key>         Check whether a key exists
               HELP                 Show commands
               EXIT                 Quit the database
             """;
@@ -94,4 +98,13 @@ public class CommandParser {
 
         return String.join("\n", all);
     }
-} 
+
+    private String handleExists(String[] parts) {
+        if (parts.length < 2) {
+            return "Usage: EXISTS <key>";
+        }
+
+        boolean exists = db.exists(parts[1]);
+        return exists ? "true" : "false";
+    }
+}

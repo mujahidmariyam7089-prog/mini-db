@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Database{
+public class Database {
     private final DiskManager diskManager;
     private final BPlusTree index;
 
@@ -14,21 +14,22 @@ public class Database{
         loadIndex();
     }
 
-    private void loadIndex() throws IOException{
+    private void loadIndex() throws IOException {
         List<String> lines = diskManager.readAllLines();
         long offset = 0;
 
-        for(String line: lines){
-            if(line.isEmpty()){
+        for (String line : lines) {
+            if (line.isEmpty()) {
                 continue;
             }
 
             int equalsPosition = line.indexOf('=');
 
-            if(equalsPosition == -1){
+            if (equalsPosition == -1) {
                 offset += line.length() + 1;
                 continue;
             }
+
             String key = line.substring(0, equalsPosition);
             index.put(key, offset);
 
@@ -36,53 +37,63 @@ public class Database{
         }
     }
 
-    public void set(String key, String value) throws IOException{
+    public void set(String key, String value) throws IOException {
         String line = key + "=" + value;
         long newOffset = diskManager.appendLine(line);
         index.put(key, newOffset);
     }
 
-    public String get(String key) throws IOException{
+    public String get(String key) throws IOException {
         Long offset = index.get(key);
 
-        if (offset == null){
+        if (offset == null) {
             return null;
         }
+
         String line = diskManager.readLineAt(offset);
-        if (line == null){
+
+        if (line == null) {
             return null;
         }
+
         int equalsPosition = line.indexOf('=');
-        if (equalsPosition == -1){
+
+        if (equalsPosition == -1) {
             return null;
         }
-    
+
         String storedKey = line.substring(0, equalsPosition);
 
-        if(!storedKey.equals(key)){
+        if (!storedKey.equals(key)) {
             return null;
         }
+
         return line.substring(equalsPosition + 1);
-        }
-        public void delete(String key){
+    }
+
+    public boolean exists(String key) {
+        return index.get(key) != null;
+    }
+
+    public void delete(String key) {
         index.remove(key);
     }
-    public List<String> listAll() throws IOException{
+
+    public List<String> listAll() throws IOException {
         List<String> result = new ArrayList<>();
 
-        for(String key: index.keys()){
+        for (String key : index.keys()) {
             String value = get(key);
 
-            if (value != null){
+            if (value != null) {
                 result.add(key + " = " + value);
-
             }
         }
 
         return result;
     }
 
-    public void close() throws IOException{
+    public void close() throws IOException {
         diskManager.close();
     }
 }

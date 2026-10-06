@@ -85,4 +85,8 @@ public class Database{
     public void close() throws IOException{
         diskManager.close();
     }
+
+    public boolean exists(String key) {
+    return index.get(key) != null;
+    }
 }
