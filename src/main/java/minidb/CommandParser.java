@@ -39,6 +39,12 @@ public class CommandParser {
             case "EXISTS":
                 return handleExists(parts);
 
+            case "INCR":
+                return handleIncrement(parts);
+
+            case "DECR":
+                return handleDecrement(parts);
+
             case "EXIT":
             case "QUIT":
                 return "Exiting...";
@@ -57,6 +63,8 @@ public class CommandParser {
               DELETE <key>         Delete a key
               LIST                 List all keys
               EXISTS <key>         Check whether a key exists
+              INCR <key>           Increase a numeric value by 1
+              DECR <key>           Decrease a numeric value by 1
               HELP                 Show commands
               EXIT                 Quit the database
             """;
@@ -106,5 +114,31 @@ public class CommandParser {
 
         boolean exists = db.exists(parts[1]);
         return exists ? "true" : "false";
+    }
+
+    private String handleIncrement(String[] parts) throws IOException {
+        if (parts.length < 2) {
+            return "Usage: INCR <key>";
+        }
+
+        try {
+            long newValue = db.increment(parts[1]);
+            return String.valueOf(newValue);
+        } catch (NumberFormatException e) {
+            return "ERR value is not an integer";
+        }
+    }
+
+    private String handleDecrement(String[] parts) throws IOException {
+        if (parts.length < 2) {
+            return "Usage: DECR <key>";
+        }
+
+        try {
+            long newValue = db.decrement(parts[1]);
+            return String.valueOf(newValue);
+        } catch (NumberFormatException e) {
+            return "ERR value is not an integer";
+        }
     }
 }
