@@ -87,9 +87,9 @@ public class Database {
     set(key, String.valueOf(number));
 
     return number;
-}
+}   
 
-public long decrement(String key) throws IOException {
+    public long decrement(String key) throws IOException {
     String currentValue = get(key);
     long number;
 
@@ -103,7 +103,10 @@ public long decrement(String key) throws IOException {
     set(key, String.valueOf(number));
 
     return number;
-}
+    }
+    public int count() {
+    return index.keys().size();
+    }
 
     public void delete(String key) {
         index.remove(key);

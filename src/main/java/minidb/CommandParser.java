@@ -44,6 +44,8 @@ public class CommandParser {
 
             case "DECR":
                 return handleDecrement(parts);
+            case "COUNT":
+                return handleCount();
 
             case "EXIT":
             case "QUIT":
@@ -67,6 +69,7 @@ public class CommandParser {
               DECR <key>           Decrease a numeric value by 1
               HELP                 Show commands
               EXIT                 Quit the database
+              COUNT                Show the number of stored keys
             """;
     }
 
@@ -133,7 +136,7 @@ public class CommandParser {
         if (parts.length < 2) {
             return "Usage: DECR <key>";
         }
-
+        
         try {
             long newValue = db.decrement(parts[1]);
             return String.valueOf(newValue);
@@ -141,4 +144,8 @@ public class CommandParser {
             return "ERR value is not an integer";
         }
     }
+    private String handleCount() {
+    int total = db.count();
+    return String.valueOf(total);
+    }   
 }
