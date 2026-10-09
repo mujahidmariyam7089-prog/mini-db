@@ -107,6 +107,55 @@ public class Database {
     public int count() {
     return index.keys().size();
     }
+    public List<String> keys(String pattern) {
+    List<String> result = new ArrayList<>();
+
+    for (String key : index.keys()) {
+        if (matches(key, pattern)) {
+            result.add(key);
+        }
+    }
+
+    return result;
+}
+
+private boolean matches(String key, String pattern) {
+    if (pattern.equals("*")) {
+        return true;
+    }
+
+    if (pattern.indexOf('*') == -1) {
+        return key.equals(pattern);
+    }
+
+    String[] parts = pattern.split("\\*", -1);
+
+    if (parts.length == 2) {
+        String prefix = parts[0];
+        String suffix = parts[1];
+
+        if (prefix.isEmpty() && suffix.isEmpty()) {
+            return true;
+        }
+
+        if (!prefix.isEmpty() && !key.startsWith(prefix)) {
+            return false;
+        }
+
+        if (!suffix.isEmpty() && !key.endsWith(suffix)) {
+            return false;
+        }
+
+        if (!prefix.isEmpty() && !suffix.isEmpty() && key.length() < prefix.length() + suffix.length()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    return key.equals(pattern);
+}
+    
 
     public void delete(String key) {
         index.remove(key);

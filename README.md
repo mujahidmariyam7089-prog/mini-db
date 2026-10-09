@@ -4,7 +4,7 @@ A simple key-value database implemented in Java for learning how databases work 
 
 ## Features
 - Persistent storage in a single data file
-- Commands: SET, GET, DELETE, LIST
+- Commands: SET, GET, DELETE, LIST, EXISTS, INCR, DECR, COUNT, KEYS, HELP, EXIT
 - B+Tree-based index for fast lookups
 
 ## Build & Run

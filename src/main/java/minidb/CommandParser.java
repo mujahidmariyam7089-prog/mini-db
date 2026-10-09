@@ -44,8 +44,12 @@ public class CommandParser {
 
             case "DECR":
                 return handleDecrement(parts);
+
             case "COUNT":
                 return handleCount();
+
+            case "KEYS":
+                return handleKeys(parts);
 
             case "EXIT":
             case "QUIT":
@@ -67,9 +71,10 @@ public class CommandParser {
               EXISTS <key>         Check whether a key exists
               INCR <key>           Increase a numeric value by 1
               DECR <key>           Decrease a numeric value by 1
+              COUNT                Show the number of stored keys
+              KEYS <pattern>        List keys matching a pattern
               HELP                 Show commands
               EXIT                 Quit the database
-              COUNT                Show the number of stored keys
             """;
     }
 
@@ -147,5 +152,19 @@ public class CommandParser {
     private String handleCount() {
     int total = db.count();
     return String.valueOf(total);
-    }   
+    }  
+
+    private String handleKeys(String[] parts) {
+    if (parts.length < 2) {
+        return "Usage: KEYS <pattern>";
+    }
+
+    List<String> keys = db.keys(parts[1]);
+
+    if (keys.isEmpty()) {
+        return "(empty)";
+    }
+
+    return String.join("\n", keys);
+} 
 }
